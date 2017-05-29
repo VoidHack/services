@@ -1,0 +1,60 @@
+body {
+    background-image: url(./images/background-tulip.gif);
+}
+
+a.links {
+    color: blue;
+    cursor: pointer;
+    margin-right: 10;
+}
+
+div.main {
+    margin-top: 100px;
+    text-align: justify;
+    width: 100%;
+}
+
+div.reg {
+    text-align: center;
+}
+
+div.image {
+    margin-top: 40px;
+    text-align: center;
+}
+
+div.reg_submit {
+    text-align: center;
+    text-indent: 15;
+}
+
+.header {
+    text-align: center;
+}
+
+table.reg {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.tulip {
+    width: 80%;
+    border: thin solid black;
+    background-color: pink;
+}
+
+td.tulip_image {
+    border-bottom: thin solid black;
+    text-align: center;
+}
+
+td.tulip_text {
+    border-bottom: thin solid black;
+    text-align: justify;
+    padding-right: 20px;
+}
+
+input.buy {
+    border: 0px none;
+}

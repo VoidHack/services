@@ -1,0 +1,77 @@
+body {
+    background-image: url(./images/background-ganja.gif);
+}
+
+a.links {
+    color: blue;
+    cursor: pointer;
+    margin-right: 10;
+}
+
+div.main {
+    margin-top: 100px;
+    text-align: justify;
+    width: 100%;
+}
+
+div.image {
+    margin-top: 40px;
+    text-align: center;
+}
+
+div.reg_submit {
+    text-align: center;
+    text-indent: 15;
+}
+
+.header {
+    text-align: center;
+}
+
+table.orders {
+    width: 80%;
+    border: thin solid black;
+    background-color: #269E23;
+}
+
+table.all_users {
+    width: 80%;
+    border: thin solid black;
+    background-color: #269E23;
+}
+
+table.ganja {
+    width: 80%;
+    border: thin solid black;
+    background-color: #269E23;
+}
+
+td.orders_image {
+    border-bottom: thin solid black;
+    text-align: center;
+}
+
+td.orders_text {
+    border-bottom: thin solid black;
+    text-align: justify;
+}
+
+td.orders_amount {
+    border-bottom: thin solid black;
+    text-align: center;
+}
+
+td.ganja_image {
+    border-bottom: thin solid black;
+    text-align: center;
+}
+
+td.ganja_text {
+    border-bottom: thin solid black;
+    text-align: justify;
+    padding-right: 20px;
+}
+
+input.buy {
+    border: 0px none;
+}

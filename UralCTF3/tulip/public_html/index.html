@@ -1,0 +1,274 @@
+<html>
+<head>
+<title> The tulip shop! Best in the world :).</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<meta name="author" content="Ilya Zelenchuk">
+<meta name="keywords" content="Tulip ganja UralCTF2007" />
+<meta name="description" content="The Tulip/Ganja shop :)" />
+
+<link id="style" rel="stylesheet" href="tulip.css" type="text/css">
+</head>
+<body onload="check_login()" style="display:none">
+
+<script type="text/javascript">
+
+function show_links(level)
+{
+
+	var links=new String;
+
+	switch (level){
+	    case 0:
+		links="<a id='reg' class='links' onclick='show_reg()'><u>Registration</u></a>";
+		links+="<a id='stock' class='links' onclick='show_stock()'><u>Stock</u></a>";
+		document.getElementById("links").innerHTML=links;
+		break;
+
+	    case 1:
+		links="<a id='logout'class='links' onclick='do_logout()'><u>Logout</u></a>";
+		links+="<a id='user' class='links' onclick='show_user()'><u>User account</u></a>";
+		links+="<a id='stock' class='links' onclick='show_stock()'><u>Stock</u></a>";
+		document.getElementById("links").innerHTML=links;
+		document.getElementById("login").style.display="none";
+		document.getElementById("logout").innerHTML="<u>Logout ("+get_login_from_cookie()+")</u>";
+		break;
+
+	    case 2:
+		links="<a id='logout' class='links' onclick='do_logout()'><u>Logout</u></a>";
+		links+="<a id='user' class='links' onclick='show_user()'><u>User account</u></a>";
+		links+="<a id='stock' class='links' onclick='show_stock()'><u>Stock</u></a>";
+		links+="<a id='show_allusers' class='links' onclick='show_allusers()'><u>Show users</u></a>";
+		document.getElementById("links").innerHTML=links;
+		document.getElementById("login").style.display="none";
+		document.getElementById("logout").innerHTML="<u>Logout ("+get_login_from_cookie()+")</u>";
+		break;
+
+	    default:	
+		links="<a id='reg' class='links' onclick='show_reg()'><u>Registration</u></a>";
+		links+="<a id='stock' class='links' onclick='show_stock()'><u>Stock</u></a>";
+		document.getElementById("links").innerHTML=links;
+		break;
+	}		
+	
+}
+
+function do_login (form)
+{
+    var login=form.login.value;
+    var pass=form.pass.value;
+    var request="login="+login+"&password="+pass;
+    do_ajax("/~tulip/shop.pl?action=do_login", request, "post");
+}
+
+function do_logout ()
+{
+    do_ajax("/~tulip/shop.pl", "?action=do_logout", "get");
+}
+
+function get_login_from_cookie ()
+{
+
+    var login="";
+    var i;
+    var tmp;
+
+    var j = document.cookie.match(/ganja-shop=[^;]+/);
+    var cookie=j[0].split("");
+    
+    for (i=11; i<cookie.length; i++){
+
+        if (cookie[i]=="_")
+	    var tmp=i;
+    }
+    
+    for (i=11; i<tmp; i++)
+	    login+=cookie[i];
+	    
+return login;
+}
+
+function check_login ()
+{
+    var text="<h3 align=\"center\"> The ganja shop! </h3><br> Cannabis is a genus of flowering plants that includes three putative species, Cannabis sativa L., Cannabis indica Lam., and Cannabis ruderalis Janisch. These three taxa are indigenous to central Asia and surrounding regions. Industrial hemp products are made from Cannabis plants selected to produce an abundance of fiber and minimal levels of THC (.9- tetrahydrocannabinol), one psychoactive molecule that produces the \"high\" associated with marijuana. The drug consists of dried flowers and leaves of plants selected to produce high levels of THC. Various extracts including hashish and hash oil are also produced. The cultivation and possession of Cannabis for recreational use is outlawed in most countries.<div class=\"image\"><img src=\"./images/Ganja.gif\"></div>";
+
+    if (document.cookie.match(/ganja-shop/)) {
+	document.title="Welcome to the Gnaja shop :)";
+	document.getElementById("main").innerHTML=text;
+	document.getElementById("style").href="./ganja.css";
+	
+	if (document.cookie.match(/ganja-admin/))
+	    show_links(2);
+	else
+	    show_links(1);
+
+	document.body.style.display="inline";
+	    
+	return 0;
+    }
+
+    show_links(0);
+    document.body.style.display="inline";
+    
+}
+
+function do_reg()
+{
+    var login=document.forms[0].login.value;
+    var fname=document.forms[0].fname.value;
+    var sname=document.forms[0].sname.value;
+    var pass=document.forms[0].password.value;
+    var mail=document.forms[0].mail.value;
+    var card=document.forms[0].card.value;
+    
+    var a="login="+login+"&fname="+fname+"&sname="+sname+"&password="+pass+"&mail="+mail+"&card="+card;
+
+    a=a.replace(/:/g, "");
+
+    do_ajax("/~tulip/shop.pl?action=do_reg", a, "post");
+
+    return 0;
+}
+
+function do_ajax(script, query, method)
+{
+
+    var xhr;
+    
+    try {
+	xhr = new ActiveXObject('Msxml2.XMLHTTP');
+    }
+	catch (e)
+	{
+	    try {xhr = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+	    catch(e2)
+	    {
+		try {xhr=new XMLHttpRequest();}
+		
+		catch (e3){
+		    xhr = false;
+		}
+	    }
+	}
+	
+    xhr.onreadystatechange = function() {
+
+        if (xhr.readyState == 4){
+	
+	    if (xhr.responseText=="<h3 class='header'>Registration is successful</h3><br>" || xhr.responseText=="<h3 class='header'>Login is successful</h3>"){
+	    
+		document.title="Welcome to the Gnaja shop :)";
+		document.getElementById("style").href="./ganja.css";
+		show_links(1);
+		do_ajax("/~tulip/shop.pl", "?action=show_stock", "get");
+		
+		if (document.cookie.match(/ganja-admin/))
+		    show_links(2);	
+	    } 
+	    
+	    if (xhr.responseText=="<h3 class='header'>Logging off</h3>"){
+		document.location.reload();
+		return 0;
+	    }
+	     
+	    
+	    if (xhr.responseText=="<h3 class='header'>Register please!</h3>"){
+		alert("Man, you can't do this as anonym.\nShow yourself!");
+		return 0
+	    }
+	    
+	    if (xhr.responseText=="<h3 class='header'>Done!</h3>")
+		return 0;
+	    
+	    if (xhr.responseText.match(/Your current orders/)){
+		alert(xhr.responseText);
+		return 0;
+	    }
+	    
+	    document.getElementById("main").innerHTML=xhr.responseText;
+	}
+    };
+    
+    if (method=="get"){
+        xhr.open("GET", script+query, true);
+    	xhr.send(null);
+    } else {
+	xhr.open("POST", script, true);
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhr.send(query);
+    }
+
+}
+
+function show_stock()
+{
+    do_ajax("/~tulip/shop.pl", "?action=show_stock", "get");
+}
+
+function show_reg()
+{
+    do_ajax("/~tulip/shop.pl", "?action=show_reg", "get");
+}
+
+function show_user()
+{
+    do_ajax("/~tulip/shop.pl", "?action=show_user", "get");
+}
+
+function show_allusers()
+{
+    do_ajax("/~tulip/shop.pl", "?action=show_allusers", "get");
+}
+
+function do_buy(drug)
+{
+
+    var answer=confirm("Dude, you really wanna get this drug?");
+    
+    if (answer)
+	do_ajax("/~tulip/shop.pl?action=buy_drug", "drug_name="+drug, "post");
+}
+
+</script>
+
+<table width="100%" border="0" align="center">
+<tr>
+<td width="10%"></td>
+<td valign="top">
+    <div style="text-align: center">
+	<div id="links" class="links"></div>
+        <div id="main" class="main">
+	<h3 class="header"> The tulip shop! </h3><br>
+	Tulips are associated with Holland, both the flower and
+	its name originated in the Persian Empire. The tulip is actually not a Dutch
+	flower as many people tend to believe. The tulip, or "Laleh" as it's called
+	in Persian, is a flower indigenous to Iran, Afghanistan, Turkey and
+	other parts of Central Asia. A Dutch ambassador in Turkey in the
+	16th century, who was also a great floral enthusiast, Ogier Ghiselin
+	de Busbecq, got their very names because of their Persian origins.
+	Tulips were brought to Europe in the 16th century; the word tulip,
+	which earlier in English appeared in such forms as tulipa or tulipant,
+	came to us by way of French tulipe and its obsolete form tulipan or
+	by way of Modern Latin tul.pa, from Ottoman Turkish t.lbend,
+	"muslin, gauze." (English word turban, first recorded in English in
+	the 16th century, can also be traced to Ottoman Turkish t.lbend.) The Turkish
+	word for gauze, with which turbans can be wrapped, seems to have been used
+	for the flower because a fully opened tulip was thought to resemble a turban.
+	<div class="image"><img src="./images/Tulip.gif"></div>
+	</div>
+    </div>
+    
+</td>
+<td valign="top" width="10%">
+    <form action="do_login()" id="login" method="POST">
+    <div> User name:<br> <input type="text" name="login" size="15px%"></div>
+    <div> Password: &nbsp<br><input type="password" name="pass" size="15px"></div>
+    <div style="text-align: right; text-indent: 15"><input type="button" name="submit" value="Login" onclick="do_login(this.form)"></div>
+    </form>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

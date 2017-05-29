@@ -1,0 +1,156 @@
+<html>
+<head>
+<title>mega-web-console-forum</title>
+<style type="text/css">
+body {
+	background-color: black;
+	font-family: monospace;
+	font-size: 20px;
+	color: white;
+	overflow: hidden;
+}
+
+span {
+	white-space: pre;
+}
+</style>
+
+<script type="text/javascript" src="keyboard.js"></script>
+<script type="text/javascript" src="history.js"></script>
+<script type="text/javascript" src="commands.js"></script>
+<script type="text/javascript" src="console.js"></script>
+<script type="text/javascript" src="cursor.js"></script>
+<script>
+
+var commandHistory;
+var commandsObject;
+var consoleObject;
+var cursorObject;
+var keyboardObject; 
+var sid="-1";
+
+var localPath = "/";
+var localPathOld = "/"
+
+function refreshCursor() {
+	cursorObject.changeCursorState();
+}
+
+function init() {
+	keyboardObject = new KeyboadObject();
+	commandHistory = new HistoryObject();
+	consoleObject = new ConsoleObject();
+	commandsObject = new CommandsObject();
+	cursorObject = new CursorObject();
+	setInterval(refreshCursor, 400);
+
+}
+
+
+function processCommand(s) {
+	cursorObject.toggleCursor();
+	var cmd = s.split(" ")[0];
+	var params = s.split(" ").slice(1).join(" ");
+	switch(cmd) {
+		case "cd":
+			cdCommand(params);		
+			break;
+		case "sid":
+			consoleObject.printToStdout("\n" + sid);
+			cursorObject.toggleCursor();
+			consoleObject.createNewScreen();
+			break;
+		default:
+			var readyFunc = function (http) {
+				var xml = http.responseXML;
+				if (xml.getElementsByTagName('s').length) {
+					eval(xml.getElementsByTagName('s')[0].firstChild.data);
+				}
+				if (xml.getElementsByTagName('d').length) {
+					var resultString = "";
+					for (var i = 0; i < xml.getElementsByTagName('d').length; i++) {
+						resultString += xml.getElementsByTagName('d')[i].firstChild.data
+					}
+					consoleObject.printToStdout("\n" + resultString);
+					cursorObject.toggleCursor();
+					consoleObject.createNewScreen();
+				}
+				if (xml.getElementsByTagName('td').length) {
+					consoleObject.printToStdoutInHTML("<br>" + xml.getElementsByTagName('td')[0].firstChild.data);
+					cursorObject.toggleCursor();
+					consoleObject.createNewScreen();
+				}
+			};
+			consoleObject.sendServer("cmd=" + cmd + "&path=" + localPath + "&sid=" + sid + "&params=" + params, readyFunc);
+	}
+}
+
+function authCommand() {
+	consoleObject.printToStdout("\n" + "username: ");
+	readUserName(null);
+}
+
+function readUserName(s) {
+	if (s == null) {
+		keyboardObject.readLine(readUserName);
+	} else {
+		consoleObject.printToStdout("\n" + "hello " + s);
+		consoleObject.printToStdout("\n" + "password: ");
+		readUserPass(null);
+	}
+}
+
+function readUserPass(s) {
+	if (s == null) {
+		keyboardObject.readLine(readUserPass);
+	} else {
+		consoleObject.printToStdout("\n" + "dont tell anyone: " + s);
+		cursorObject.toggleCursor();
+		consoleObject.createNewScreen();
+	}
+}
+
+function cdCommand(s) {
+	localPathOld = localPath;
+	localPath += s;
+	var a = localPath.split("/");
+	var again = true;
+	var r = new Array();
+	for (var i = 0; i < a.length; i++) {
+		switch (a[i]) {
+			case '..':
+				if (r.length) r.pop();
+				break;
+			case '.':
+			case '':
+				break;
+			default:
+				r.push(a[i]);
+		}
+	}
+	localPath = r.join("/");
+	localPath += "/";
+	if (localPath.substr(0,1) != "/") localPath = "/" + localPath;
+	var readyFuncCD = function (http) {
+		var xml = http.responseXML;
+		if (xml.getElementsByTagName('cd').length) {
+			if (xml.getElementsByTagName('cd')[0].firstChild.data != "ok") {
+				consoleObject.printToStdout("\ncould not change directory");
+				localPath = localPathOld;
+			}
+			cursorObject.toggleCursor();
+			consoleObject.createNewScreen();
+			consoleObject.changeGreetingDir(localPath);
+		}
+	};
+	consoleObject.sendServer("cmd=cd&path=" + localPath, readyFuncCD);
+}
+
+</script>
+</head>
+<body name="mmain" id="mmain" onkeypress="keyboardObject.processKey(event)" onkeyup="keyboardObject.processSpecialKeys(event)" onkeydown="return keyboardObject.processKeyDown()" onload="init()">
+<div id="bigSam">
+<span id="block" name="block"><span id="greeting" name="greeting"><span id="username" name="username">public</span>@server:<span id="directory" name="directory">/</span><span id="usertype" name="usertype">$</span> </span><span id="cmdline" name="cmdline"></span><span id="std" name="std"><span id="stdout" name="stdout"></span><span id="stdin" name="stdin"></span></span><span name="cursor" id="cursor">_</span><br></span>
+</div>
+<div id="lastelement" name="lastelement"></div>
+</body>
