@@ -1,0 +1,22 @@
+.list-group-item {
+    background-color: transparent;
+    color: #FFFFFF;
+    font-weight: 100;
+}
+
+.audio-upload > input {
+    display: none;
+}
+
+.audio-upload img {
+    height: 100px;
+    width: 100px;
+    border: none;
+    cursor: pointer;
+    color: transparent;
+}
+
+.cover-container > .inner {
+    max-height: 600px;
+    overflow-y: auto;
+}

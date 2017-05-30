@@ -1,0 +1,12 @@
+{% extends "alexa/base.html" %}
+
+{% load static %}
+
+{% block title %}Unsupported Media Type - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1 class="cover-heading">Unsupported Media Type</h1>
+
+<p class="lead">At this early stage, Alexa can only work with PCM WAV, AIFF/AIFF-C, or Native FLAC files smaller than 1MB.</p>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /srv/doodle
+
+[ -f enc.key ] || dd if=/dev/urandom of=enc.key bs=1 count=16
+[ -f hmac.key ] || dd if=/dev/urandom of=hmac.key bs=1 count=16
+
+chown doodle:root hmac.key enc.key
+chmod 640 hmac.key enc.key

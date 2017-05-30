@@ -1,0 +1,10 @@
+div.poll-comment-box {
+	background-color: #ddd;
+	margin: .5em;
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+p.poll-error {
+	background-color: red;	
+}

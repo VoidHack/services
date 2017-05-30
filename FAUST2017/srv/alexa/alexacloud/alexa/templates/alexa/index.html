@@ -1,0 +1,19 @@
+{% extends "alexa/base.html" %}
+
+{% load static %}
+
+{% block title %}Ask me something! - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1 class="cover-heading">Ask me something!</h1>
+<p class="lead">I'm offering my very best advice to you!</p>
+<form class="lead audio-upload" enctype="multipart/form-data" method="post" action="/alexa/query">
+    <input type="hidden" name="lang" value="en-us" />
+    <label for="audioFile">
+        <img src="{% static "images/microphone_icon_100.png" %}" />
+    </label>
+    <input type="file" id="audioFile" name="audioFile" onchange="form.submit()" />
+    <!--<input type="submit" name="submit" value="Query" />-->
+</form>
+
+{% endblock %}

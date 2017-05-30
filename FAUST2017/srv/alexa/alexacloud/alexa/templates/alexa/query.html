@@ -1,0 +1,18 @@
+{% extends "alexa/base.html" %}
+{% load static %}
+{% load alexa_extras %}
+
+{% block title %}Query - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h3>{{ response|printFileContent|default:response }}</h3>
+
+    <br/>
+    <br/>
+
+    <h5>Listen to your query again:</h5>
+    <audio controls>
+        <source src="{{ audioFile }}" />
+    </audio>
+
+{% endblock %}
